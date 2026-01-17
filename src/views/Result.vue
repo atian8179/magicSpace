@@ -65,11 +65,12 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useQuizStore } from '../stores/quiz'
 import RadarChart from '../components/RadarChart.vue'
+import { trackQuizComplete, trackCourseClick } from '../utils/analytics'
 
 const router = useRouter()
 const quizStore = useQuizStore()
@@ -79,7 +80,15 @@ if (!result.value) {
   router.push('/')
 }
 
+// 页面加载时统计测评完成
+onMounted(() => {
+  if (result.value) {
+    trackQuizComplete(result.value.talentType.name)
+  }
+})
+
 const goToCourse = () => {
+  trackCourseClick() // 统计：点击领课
   router.push('/course')
 }
 

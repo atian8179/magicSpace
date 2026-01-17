@@ -89,11 +89,13 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useQuizStore } from '../stores/quiz'
+import { trackQuizStart } from '../utils/analytics'
 
 const router = useRouter()
 const quizStore = useQuizStore()
 
 const startQuiz = () => {
+  trackQuizStart() // 统计：开始测评
   quizStore.resetQuiz()
   router.push('/quiz')
 }

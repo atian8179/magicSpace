@@ -158,6 +158,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useQuizStore } from '../stores/quiz'
+import { trackCourseSubmit } from '../utils/analytics'
 
 const router = useRouter()
 const quizStore = useQuizStore()
@@ -216,11 +217,15 @@ const submitForm = async () => {
   await new Promise(resolve => setTimeout(resolve, 1500))
 
   // 发送数据到后台
-  console.log('提交表单:', {
+  const submitData = {
     ...form.value,
     talentType: result.value?.talentType?.name,
     scores: result.value?.scores
-  })
+  }
+  console.log('提交表单:', submitData)
+
+  // 统计：表单提交
+  trackCourseSubmit(submitData)
 
   isSubmitting.value = false
   showSuccessModal.value = true
