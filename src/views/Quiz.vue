@@ -37,12 +37,17 @@
           v-for="(option, index) in currentQuestion.options"
           :key="index"
           class="option-item"
+          :class="{ 'option-loading': isTransitioning }"
+          :disabled="isTransitioning"
           @click="selectAnswer(index)"
         >
           <span class="option-letter">{{ ['A', 'B', 'C', 'D'][index] }}</span>
           <span class="option-content">{{ option.text }}</span>
-          <svg class="option-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <svg v-if="!isTransitioning" class="option-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg v-else class="option-spinner" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="12" stroke-dashoffset="6" class="spinner-path"/>
           </svg>
         </button>
       </div>
@@ -72,6 +77,7 @@ const quizStore = useQuizStore()
 const { currentQuestionIndex, totalQuestions, currentQuestion, progress, answers } = storeToRefs(quizStore)
 
 const showTransition = ref(false)
+const isTransitioning = ref(false)
 
 const dimensionLabels = {
   logic: '逻辑推理',
@@ -95,11 +101,15 @@ const getDimensionLabel = (dim) => dimensionLabels[dim] || '综合能力'
 const getDimensionGradient = (dim) => dimensionGradients[dim] || dimensionGradients.logic
 
 const selectAnswer = (index) => {
+  if (isTransitioning.value) return
+
+  isTransitioning.value = true
   showTransition.value = true
 
   setTimeout(() => {
     quizStore.answerQuestion(index)
     showTransition.value = false
+    isTransitioning.value = false
 
     if (answers.value.length === totalQuestions.value) {
       const result = quizStore.calculateResult()
@@ -263,6 +273,29 @@ const goBack = () => {
 
 .option-item:active {
   transform: scale(0.98);
+}
+
+.option-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.option-item.option-loading {
+  pointer-events: none;
+}
+
+.option-spinner {
+  color: var(--brand-orange);
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-path {
+  transform-origin: center;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .option-letter {
