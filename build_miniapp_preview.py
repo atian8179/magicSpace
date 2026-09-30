@@ -1,4 +1,4 @@
-import base64, json, os, re, time, httpx
+import base64, copy, json, os, re, time, httpx
 from bs4 import BeautifulSoup
 from PIL import Image, ImageDraw, ImageFilter
 from io import BytesIO
@@ -175,6 +175,18 @@ def bake_soft_shadow(source):
     base.paste(im.convert("RGBA"), (left, top), mask)
     return base.convert("RGB")
 
+# Preserve a publish copy with the exact same layout/styles; only image URLs differ.
+publish_soup = copy.deepcopy(soup)
+publish_imgs = publish_soup.find_all("img")
+for i, tag in enumerate(publish_imgs, 1):
+    tag["src"] = "{{IMG" + str(i) + "}}"
+    tag["style"] = (
+        "display:block;width:100%;height:auto;margin:26px 0 8px 0;"
+        "padding:0;border:0;border-radius:0;"
+    )
+    for a in ["data-src","data-original","referrerpolicy","crossorigin"]:
+        tag.attrs.pop(a, None)
+
 # Localize every body image and bake the exact shadow asset used for preview/publish.
 imgs = soup.find_all("img")
 assets = []
@@ -196,6 +208,8 @@ for i, tag in enumerate(imgs, 1):
     rendered.save(buf, format="JPEG", quality=86, optimize=True)
     raw = buf.getvalue()
     mime = "image/jpeg"
+    with open(os.path.join(OUT, f"publish-img-{i}.jpg"), "wb") as pf:
+        pf.write(raw)
 
     tag["src"] = "data:image/jpeg;base64," + base64.b64encode(raw).decode("ascii")
     tag["style"] = (
@@ -291,6 +305,8 @@ check = {
 
 with open(os.path.join(OUT,"index.html"),"w",encoding="utf-8") as f:
     f.write(preview)
+with open(os.path.join(OUT,"publish.html"),"w",encoding="utf-8") as f:
+    f.write(str(publish_soup))
 with open(os.path.join(OUT,"check.json"),"w",encoding="utf-8") as f:
     json.dump(check,f,ensure_ascii=False,indent=2)
 
