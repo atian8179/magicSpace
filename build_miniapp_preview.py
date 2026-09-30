@@ -1,6 +1,6 @@
 import base64, json, os, re, httpx
 from bs4 import BeautifulSoup
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFilter
 from io import BytesIO
 
 ARTICLE_B64_PATH = "miniapp_article_v4.b64"
@@ -37,15 +37,12 @@ for i, tag in enumerate(imgs, 1):
 
     raw = r.content
     ctype = (r.headers.get("content-type") or "").split(";")[0].lower()
-    # Re-encode to JPEG to keep the single-file preview compact and portable.
+    # Bake a soft, gradient-like shadow into the bitmap itself so preview and WeChat match.
     try:
-        im = Image.open(BytesIO(raw)).convert("RGB")
-        max_w = 1400
-        if im.width > max_w:
-            h = round(im.height * max_w / im.width)
-            im = im.resize((max_w, h))
+        im = Image.open(BytesIO(raw))
+        rendered = bake_soft_shadow(im)
         buf = BytesIO()
-        im.save(buf, format="JPEG", quality=82, optimize=True)
+        rendered.save(buf, format="JPEG", quality=84, optimize=True)
         raw = buf.getvalue()
         mime = "image/jpeg"
     except Exception:
@@ -53,10 +50,11 @@ for i, tag in enumerate(imgs, 1):
 
     data = "data:" + mime + ";base64," + base64.b64encode(raw).decode("ascii")
     tag["src"] = data
+    tag["style"] = "display:block;width:100%;height:auto;margin:28px 0 8px 0;padding:0;border:0;"
     for a in ["data-src","data-original","referrerpolicy","crossorigin"]:
         if a in tag.attrs:
             del tag.attrs[a]
-    assets.append({"index":i,"source":src,"bytes":len(raw),"mime":mime})
+    assets.append({"index":i,"source":src,"bytes":len(raw),"mime":mime,"shadow":"baked-soft-gradient"})
 
 # Add a minimal preview shell without changing WeChat body styling.
 body_html = str(soup)
