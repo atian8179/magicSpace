@@ -1,4 +1,4 @@
-import asyncio, os, io, json, math, httpx
+import asyncio, os, io, json, math, httpx, base64
 from PIL import Image, ImageDraw
 from weixin_articles_mcp.fetcher import fetch_html
 from weixin_articles_mcp.parser import parse_article
@@ -63,7 +63,10 @@ async def main():
             sheet.paste(im, (px, py))
             draw.rectangle([x + 8, y + 8, x + 64, y + 38], fill="white")
             draw.text((x + 18, y + 14), str(idx), fill="black")
-        sheet.save(f"public/contact-{b+1}.jpg", quality=84, optimize=True)
+        path = f"public/contact-{b+1}.jpg"
+        sheet.save(path, quality=84, optimize=True)
+        with open(path, "rb") as rf, open(f"public/contact-{b+1}.txt", "w", encoding="utf-8") as tf:
+            tf.write("data:image/jpeg;base64," + base64.b64encode(rf.read()).decode("ascii"))
 
     print(json.dumps({"title": article.title, "account": article.account, "count": len(imgs), "batches": batches}, ensure_ascii=False))
 
