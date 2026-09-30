@@ -70,20 +70,28 @@ quote_texts = (
     "AI 负责降低“做出来”的门槛",
 )
 for sec in soup.find_all("section"):
-    txt = sec.get_text(" ", strip=True)
-    if any(key in txt for key in quote_texts):
+    # Only nested standalone quote sections can become gold-quote cards.
+    # Never style the root article container.
+    if sec.find_parent("section") is None:
+        continue
+    if sec.find(["h1","h2","img","table","section"]):
+        continue
+    ps = sec.find_all("p", recursive=False)
+    if len(ps) != 1:
+        continue
+    txt = ps[0].get_text(" ", strip=True)
+    if any(txt.startswith(key) for key in quote_texts):
         sec["style"] = (
             f"width:88%;box-sizing:border-box;margin:34px auto;padding:24px 22px;"
             f"background-color:{QUOTE_BG};border:0;border-radius:12px;"
         )
-        p = sec.find("p")
-        if p:
-            fs = "17px" if len(txt) > 42 else "18px"
-            lh = "1.82" if len(txt) > 42 else "1.78"
-            p["style"] = (
-                f"margin:0;padding:0;text-align:center;font-size:{fs};"
-                f"line-height:{lh};font-weight:700;color:{QUOTE_TEXT};"
-            )
+        p = ps[0]
+        fs = "17px" if len(txt) > 42 else "18px"
+        lh = "1.82" if len(txt) > 42 else "1.78"
+        p["style"] = (
+            f"margin:0;padding:0;text-align:center;font-size:{fs};"
+            f"line-height:{lh};font-weight:700;color:{QUOTE_TEXT};"
+        )
 
 # Highlighter treatment.
 highlight_spans = []
@@ -215,8 +223,12 @@ top_blocks = [x for x in root.find_all(recursive=False) if getattr(x, "name", No
 quote_indices = []
 highlight_indices = []
 for idx, node in enumerate(top_blocks):
-    if node.name == "section" and any(key in node.get_text(" ", strip=True) for key in quote_texts):
-        quote_indices.append(idx)
+    if node.name == "section":
+        ps = node.find_all("p", recursive=False)
+        if len(ps) == 1:
+            txt = ps[0].get_text(" ", strip=True)
+            if any(txt.startswith(key) for key in quote_texts):
+                quote_indices.append(idx)
     if node.find("span", style=re.compile("text-decoration-line:underline")):
         highlight_indices.append(idx)
 
