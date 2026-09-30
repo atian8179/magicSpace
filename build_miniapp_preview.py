@@ -1,4 +1,4 @@
-import base64, json, os, re, httpx
+import base64, json, os, re, time, httpx
 from bs4 import BeautifulSoup
 from PIL import Image, ImageDraw, ImageFilter
 from io import BytesIO
@@ -9,9 +9,22 @@ os.makedirs(OUT, exist_ok=True)
 
 client = httpx.Client(
     follow_redirects=True,
-    timeout=30,
+    timeout=httpx.Timeout(70.0, connect=30.0),
     headers={"User-Agent":"Mozilla/5.0","Referer":"https://mp.weixin.qq.com/"}
 )
+
+def get_with_retry(url, headers=None, tries=4):
+    last = None
+    for attempt in range(tries):
+        try:
+            r = client.get(url, headers=headers)
+            r.raise_for_status()
+            return r
+        except Exception as e:
+            last = e
+            if attempt < tries - 1:
+                time.sleep(1.5 * (attempt + 1))
+    raise last
 
 with open(ARTICLE_B64_PATH, "r", encoding="utf-8") as f:
     html = base64.b64decode(f.read()).decode("utf-8")
@@ -166,8 +179,7 @@ for i, tag in enumerate(imgs, 1):
         im = Image.open(BytesIO(raw))
     else:
         headers = {"User-Agent":"Mozilla/5.0","Referer":"https://www.woshipm.com/"}
-        r = client.get(src, headers=headers)
-        r.raise_for_status()
+        r = get_with_retry(src, headers=headers)
         raw = r.content
         im = Image.open(BytesIO(raw))
 
