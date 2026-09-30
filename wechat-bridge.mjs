@@ -72,6 +72,15 @@ async function uploadCover(token, image) {
   return data.media_id;
 }
 
+function getCoverImage(fallbackImage) {
+  if (process.env.COVER_B64) {
+    const buf = Buffer.from(process.env.COVER_B64, 'base64');
+    if (!buf.length) throw new Error('COVER_B64_EMPTY');
+    return {buf, type:'image/jpeg'};
+  }
+  return fallbackImage;
+}
+
 async function submitDraft() {
   const token = await getToken();
   const images = [];
@@ -82,7 +91,7 @@ async function submitDraft() {
     wxUrls.push(await uploadBodyImage(token, images[i], i + 1));
   }
 
-  const thumbMediaId = await uploadCover(token, images[0]);
+  const thumbMediaId = await uploadCover(token, getCoverImage(images[0]));
 
   let content = Buffer.from(process.env.ARTICLE_B64, 'base64').toString('utf8');
   wxUrls.forEach((u, i) => {
@@ -109,7 +118,7 @@ async function submitDraft() {
   });
 
   if (!draft.media_id) throw new Error('DRAFT_ERROR ' + JSON.stringify(draft));
-  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length};
+  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:!!process.env.COVER_B64};
 }
 
 const server = http.createServer(async (req, res) => {
