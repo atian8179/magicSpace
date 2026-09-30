@@ -127,7 +127,7 @@ async function submitDraft() {
   });
 
   if (!draft.media_id) throw new Error('DRAFT_ERROR ' + JSON.stringify(draft));
-  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:true, source:'approved-preview'};
+  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:false, temporary_cover:'first-body-image', source:'approved-preview'};
 }
 
 const server = http.createServer(async (req, res) => {
