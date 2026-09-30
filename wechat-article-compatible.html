@@ -1,0 +1,86 @@
+<section style="margin:0;padding:0;color:#222;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',Arial,sans-serif;">
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">这件事比“微信又上线了一个新功能”重要得多。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">前段时间，我刚写过一次个人小程序的变化：<strong style="font-weight:700;color:#111;">微信开始向符合条件的个人主体小程序开放虚拟支付。</strong>到了 9 月 24 日，又有一个很关键的能力上线——<strong style="font-weight:700;color:#111;">个人小程序可以开通赞赏了。</strong></p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 24px 0;padding:0;"><span style="background-color:#FFF1A8;padding:0 2px;"><strong style="font-weight:700;color:#111;">一个解决“卖”，一个解决“赏”。把这两件事放在一起，小程序正在变得越来越像公众号。</strong></span></p>
+
+  <img src="{{IMG1}}" alt="微信开发者助手中的赞赏入口" style="display:block;width:100%;height:auto;margin:28px 0 8px 0;padding:0;border-radius:8px;">
+  <p style="font-size:12px;line-height:1.6;text-align:center;color:#9aa0a6;margin:0 0 34px 0;padding:0;">真实截图｜微信开发者助手中已经出现「赞赏」入口</p>
+
+  <h2 style="font-size:22px;line-height:1.5;margin:38px 0 16px 0;padding:0;color:#111;font-weight:800;">先把最容易误解的一点说清楚</h2>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;"><strong style="font-weight:700;color:#111;">“个人小程序能收钱了”，不等于个人主体已经拿到了完整的普通微信支付能力。</strong></p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">微信开放文档目前明确的是<strong style="font-weight:700;color:#111;">「虚拟支付：个人」</strong>。开通需要同时满足几个条件：小程序是<strong style="font-weight:700;color:#111;">个人主体</strong>、服务类目包含<strong style="font-weight:700;color:#111;">「工具」</strong>，并且已经完成<strong style="font-weight:700;color:#111;">小程序认证和备案</strong>。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 24px 0;padding:0;">也就是说，它最适合的就是今天大量个人开发者正在做的东西：效率工具、图片处理、办公工具、会员功能、次数包、功能解锁……这不是把企业支付原封不动地下放给个人，而是先把<strong style="font-weight:700;color:#111;">个人开发者最需要的一类数字商品变现</strong>打通了。</p>
+
+  <img src="{{IMG2}}" alt="个人小程序虚拟支付相关后台截图" style="display:block;width:100%;height:auto;margin:28px 0 8px 0;padding:0;border-radius:8px;">
+  <p style="font-size:12px;line-height:1.6;text-align:center;color:#9aa0a6;margin:0 0 34px 0;padding:0;">真实截图｜个人主体小程序虚拟支付相关后台页面</p>
+
+  <h2 style="font-size:22px;line-height:1.5;margin:38px 0 16px 0;padding:0;color:#111;font-weight:800;">然后，赞赏又把另一块拼图补上了</h2>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">虚拟支付很好理解：用户觉得某个功能值钱，于是买会员、买次数、买解锁。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">赞赏不是同一回事。公开实机页面显示，开发者可以在<strong style="font-weight:700;color:#111;">「微信开发者助手」</strong>里选择对应的小程序开通赞赏。开通时需要绑定贴图号或公众号，之后用户在小程序里轻触<strong style="font-weight:700;color:#111;">「喜欢开发者」</strong>，就可以进入赞赏流程。</p>
+
+  <img src="{{IMG3}}" alt="开通小程序赞赏页面" style="display:block;width:100%;height:auto;margin:28px 0 8px 0;padding:0;border-radius:8px;">
+  <p style="font-size:12px;line-height:1.6;text-align:center;color:#9aa0a6;margin:0 0 34px 0;padding:0;">真实截图｜「开通小程序赞赏」及用户侧赞赏金额页面</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">更重要的是，赞赏的门槛比设计一套会员体系更轻。一个工具甚至可以完全免费，只要真的持续帮到了别人，就可能有人愿意支持开发者。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 24px 0;padding:0;"><span style="background-color:#FFF1A8;padding:0 2px;"><strong style="font-weight:700;color:#111;">虚拟支付是“用户为产品价值付费”，赞赏则更像“用户为认可和信任付费”。</strong></span></p>
+
+  <img src="{{IMG4}}" alt="小程序赞赏组件接入指引" style="display:block;width:100%;height:auto;margin:28px 0 8px 0;padding:0;border-radius:8px;">
+  <p style="font-size:12px;line-height:1.6;text-align:center;color:#9aa0a6;margin:0 0 34px 0;padding:0;">真实截图｜小程序赞赏组件接入指引：进入页面、插入组件、确认位置即可</p>
+
+  <h2 style="font-size:22px;line-height:1.5;margin:38px 0 16px 0;padding:0;color:#111;font-weight:800;">公众号让一个人能做媒体，小程序正在让一个人能做产品</h2>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">为什么公众号当年能养出那么多个人创作者？因为它把原本属于一家媒体公司的能力，拆给了一个普通人。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">你不需要自己做网站，不需要搭会员系统。注册一个公众号，写文章、分发、积累读者，最后可以接广告、做付费内容，也可以接受赞赏。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">小程序过去其实一直差最后一点。一个人可以注册、可以开发、可以上线，但一到商业化，主体资质和支付能力就会立刻成为门槛。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 24px 0;padding:0;"><span style="background-color:#FFF1A8;padding:0 2px;"><strong style="font-weight:700;color:#111;">现在，微信正在一点点拆掉这堵墙。</strong></span></p>
+
+  <table style="width:100%;border-collapse:collapse;margin:18px 0 34px 0;font-size:15px;line-height:1.7;">
+    <tr>
+      <td style="padding:13px 12px;border-bottom:1px solid #e8eaed;font-weight:700;width:23%;color:#111;">公众号</td>
+      <td style="padding:13px 12px;border-bottom:1px solid #e8eaed;">想法 → 文章 → 分发 → 付费 / 赞赏</td>
+    </tr>
+    <tr>
+      <td style="padding:13px 12px;border-bottom:1px solid #e8eaed;font-weight:700;color:#111;">小程序</td>
+      <td style="padding:13px 12px;border-bottom:1px solid #e8eaed;">想法 → 工具 → 分发 → 虚拟支付 / 赞赏</td>
+    </tr>
+  </table>
+
+  <h2 style="font-size:22px;line-height:1.5;margin:38px 0 16px 0;padding:0;color:#111;font-weight:800;">偏偏这个时候，AI Coding 又来了</h2>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">以前“写一篇文章”和“做一个软件”，完全是两个难度级别。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">一个普通人有个想法，晚上就能把文章写出来；但如果他说“我想做个记账工具”“我想做个照片整理工具”“我想做个帮人改简历的小程序”，后面马上就是产品、设计、前端、后端、服务器、支付和上线审核。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">一个想法和一个真正能用的软件之间，过去隔着的往往是一支团队。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 24px 0;padding:0;"><span style="background-color:#FFF1A8;padding:0 2px;"><strong style="font-weight:700;color:#111;">现在 AI Coding 正在压缩“做出来”的成本，而微信又在压缩“上线、分发、变现”的成本。</strong></span> 这两件事发生在同一个时间点，才是这波变化真正值得关注的地方。</p>
+
+  <h2 style="font-size:22px;line-height:1.5;margin:38px 0 16px 0;padding:0;color:#111;font-weight:800;">以后，小程序可能就是一种“可执行的文章”</h2>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">这是我最近特别喜欢的一个理解。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">比如你研究了一套特别好用的简历修改方法，以前最自然的方式是写一篇《简历优化的 10 个技巧》。以后，你完全可以直接把这套经验做成一个简历优化小程序。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">你做了十年财务，不一定非要去做一家 SaaS 公司，也可以先做一个解决某个具体问题的小工具；你特别懂照片整理，也不一定要写一篇教程，可以把方法直接做成一个能用的产品。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 24px 0;padding:0;"><span style="background-color:#FFF1A8;padding:0 2px;"><strong style="font-weight:700;color:#111;">文章是在告诉别人“怎么做”，工具则是直接替别人“把它做了”。</strong></span></p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">所以我现在越来越觉得，下一波“个人创作者”未必只包括写文章、拍视频的人，也可能是那些把自己的<strong style="font-weight:700;color:#111;">经验、审美和判断</strong>，随手做成一个小产品的人。</p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">公众号曾经证明了一件事：<strong style="font-weight:700;color:#111;">一个人也可以成为一家媒体。</strong></p>
+
+  <p style="font-size:17px;line-height:1.9;text-align:justify;margin:0 0 18px 0;padding:0;">而现在，AI 把开发门槛往下打，微信又把支付和赞赏这些基础设施往个人身上放。</p>
+
+  <p style="font-size:18px;line-height:1.9;text-align:justify;margin:0 0 18px;font-weight:700;color:#111;"><span style="background-color:#FFF1A8;padding:0 2px;">再过几年回头看，开发一个小程序，可能真的会像今天写一篇公众号一样自然。</span></p>
+</section>
