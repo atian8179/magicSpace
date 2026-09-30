@@ -10,7 +10,7 @@ URL = "https://mp.weixin.qq.com/s/nFSSzluc57xPv50Zbh4owg"
 async def main():
     html = await fetch_html(URL)
     article = parse_article(html)
-    urls = filter_image_urls(article.image_urls, 64)
+    urls = filter_image_urls(article.image_urls, 160)
     os.makedirs("public", exist_ok=True)
     with open("public/article.md", "w", encoding="utf-8") as f:
         f.write(
@@ -42,7 +42,7 @@ async def main():
                 "title": article.title,
                 "account": article.account,
                 "publish_time": article.publish_time,
-                "count": len(imgs),
+                "raw_image_count": len(article.image_urls), "count": len(imgs),
                 "images": meta,
             },
             f,
