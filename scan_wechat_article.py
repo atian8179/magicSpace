@@ -65,7 +65,11 @@ async def main():
             draw.text((x + 18, y + 14), str(idx), fill="black")
         path = f"public/contact-{b+1}.jpg"
         sheet.save(path, quality=84, optimize=True)
-        with open(path, "rb") as rf, open(f"public/contact-{b+1}.txt", "w", encoding="utf-8") as tf:
+        preview = sheet.copy()
+        preview.thumbnail((760, 1040))
+        ppath = f"public/preview-{b+1}.jpg"
+        preview.save(ppath, quality=42, optimize=True)
+        with open(ppath, "rb") as rf, open(f"public/preview-{b+1}.txt", "w", encoding="utf-8") as tf:
             tf.write("data:image/jpeg;base64," + base64.b64encode(rf.read()).decode("ascii"))
 
     print(json.dumps({"title": article.title, "account": article.account, "count": len(imgs), "batches": batches}, ensure_ascii=False))
