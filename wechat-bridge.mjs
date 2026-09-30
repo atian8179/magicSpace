@@ -82,7 +82,7 @@ async function getCoverImage(fallbackImage) {
     return {buf, type:'image/jpeg'};
   }
   try {
-    return await fetchImage('https://screenshots.shipstatic.com/vibrant-data-zm8x82p/f84945d3be3538af');
+    return await fetchImage('https://miniapp-article-preview-v1-20260930.onrender.com/cover.jpg');
   } catch {
     return fallbackImage;
   }
