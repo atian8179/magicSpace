@@ -4,6 +4,7 @@ from PIL import Image, ImageDraw, ImageFilter
 from io import BytesIO
 
 ARTICLE_B64_PATH = "miniapp_article_v4.b64"
+COVER_SOURCE_URL = "https://screenshots.shipstatic.com/vibrant-data-zm8x82p/f84945d3be3538af"
 OUT = "public"
 os.makedirs(OUT, exist_ok=True)
 
@@ -302,6 +303,17 @@ check = {
     },
     "assets":assets
 }
+
+# Normalize the approved/generated cover to a WeChat-safe JPEG.
+try:
+    cr = get_with_retry(COVER_SOURCE_URL, headers={"User-Agent":"Mozilla/5.0"})
+    cim = Image.open(BytesIO(cr.content)).convert("RGB")
+    if cim.width > 1600:
+        nh = round(cim.height * 1600 / cim.width)
+        cim = cim.resize((1600, nh), Image.Resampling.LANCZOS)
+    cim.save(os.path.join(OUT, "cover.jpg"), format="JPEG", quality=90, optimize=True)
+except Exception as e:
+    print("COVER_NORMALIZE_WARN", repr(e))
 
 with open(os.path.join(OUT,"index.html"),"w",encoding="utf-8") as f:
     f.write(preview)
