@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 
-ARTICLE_URL = "https://auric-device-m9zdn4s.shipstatic.com/article.html"
+ARTICLE_B64_PATH = "miniapp_article_v4.b64"
 OUT = "public"
 os.makedirs(OUT, exist_ok=True)
 
@@ -13,7 +13,8 @@ client = httpx.Client(
     headers={"User-Agent":"Mozilla/5.0","Referer":"https://mp.weixin.qq.com/"}
 )
 
-html = client.get(ARTICLE_URL).text
+with open(ARTICLE_B64_PATH, "r", encoding="utf-8") as f:
+    html = base64.b64decode(f.read()).decode("utf-8")
 
 # v1.0 typography: section titles use normal bold rather than ExtraBold.
 html = re.sub(r'(<h2\b[^>]*?)font-weight:800', r'\1font-weight:700', html)
