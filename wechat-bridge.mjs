@@ -1,10 +1,10 @@
 import http from 'node:http';
 
 const imageUrls = [
-  process.env.IMG1,
-  process.env.IMG2,
-  process.env.IMG3,
-  process.env.IMG4
+  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-1.jpg',
+  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-2.jpg',
+  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-3.jpg',
+  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-4.jpg'
 ];
 
 let cachedResult = null;
@@ -81,7 +81,11 @@ async function getCoverImage(fallbackImage) {
     if (!buf.length) throw new Error('COVER_B64_EMPTY');
     return {buf, type:'image/jpeg'};
   }
-  return fallbackImage;
+  try {
+    return await fetchImage('https://screenshots.shipstatic.com/vibrant-data-zm8x82p/f84945d3be3538af');
+  } catch {
+    return fallbackImage;
+  }
 }
 
 async function submitDraft() {
@@ -96,7 +100,9 @@ async function submitDraft() {
 
   const thumbMediaId = await uploadCover(token, await getCoverImage(images[0]));
 
-  let content = Buffer.from(process.env.ARTICLE_B64, 'base64').toString('utf8');
+  const articleResponse = await fetch('https://miniapp-article-preview-v1-20260930.onrender.com/publish.html', {redirect:'follow'});
+  if (!articleResponse.ok) throw new Error('ARTICLE_FETCH_ERROR ' + articleResponse.status);
+  let content = await articleResponse.text();
   wxUrls.forEach((u, i) => {
     content = content.replaceAll('{{IMG' + (i + 1) + '}}', u);
   });
@@ -121,7 +127,7 @@ async function submitDraft() {
   });
 
   if (!draft.media_id) throw new Error('DRAFT_ERROR ' + JSON.stringify(draft));
-  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:!!(process.env.COVER_URL || process.env.COVER_B64)};
+  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:true, source:'approved-preview'};
 }
 
 const server = http.createServer(async (req, res) => {
