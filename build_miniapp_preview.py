@@ -32,14 +32,14 @@ with open(ARTICLE_B64_PATH, "r", encoding="utf-8") as f:
 soup = BeautifulSoup(html, "html.parser")
 
 # --- v1.1 editorial color language ---
-PRIMARY = "#2F6F62"
+PRIMARY = "#07C160"
 BODY = "#171717"
 MUTED = "#6F746F"
 HIGHLIGHT = "#F2D56B"
-QUOTE_BG = "#DDE8D5"
-QUOTE_TEXT = "#203A32"
-CAPSULE_BG = "#EDF4F1"
-CAPSULE_BORDER = "#C8DDD5"
+QUOTE_BG = "#EAF8F0"
+QUOTE_TEXT = "#111111"
+CAPSULE_BG = "#EAF8F0"
+CAPSULE_BORDER = "#BFECCF"
 
 # Body text normalization.
 for p in soup.find_all("p"):
@@ -270,7 +270,7 @@ placeholders = re.findall(r'\{\{IMG\d+\}\}', preview)
 
 check = {
     "article":"个人小程序能赞赏了！以后做小程序，可能真和写公众号一样",
-    "visual_language":"editorial-v1.1",
+    "visual_language":"wechat-green-v1.1",
     "image_count":len(preview_imgs),
     "embedded_image_count":sum(1 for x in preview_imgs if x.get("src","").startswith("data:image/")),
     "remote_image_count":len(remote),
