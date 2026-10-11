@@ -64,7 +64,7 @@ async function run() {
  status.stage='upload_cover';
  const thumb=await cover(t,imgs[0]);
  urls.forEach((url,i)=>{content=content.replaceAll('__WECHAT_UPLOAD_IMAGE_'+(i+1)+'__',url)});
- if(content.includes('__WECHAT_UPLOAD_IMAGE_')||(content.match(/<img\\b/g)||[]).length!==4) throw Error('CONTENT_ASSET_VALIDATION_FAILED');
+ if(content.includes('__WECHAT_UPLOAD_IMAGE_')||(content.split('<img').length - 1)!==4) throw Error('CONTENT_ASSET_VALIDATION_FAILED');
  status.stage='create_draft';
  const payload={articles:[{title,author:'阿天',digest:'国庆连遭三次拒审，个人主体类目、模拟抽烟、名称简介，10 条真实踩坑总结。',content,content_source_url:'',thumb_media_id:thumb,need_open_comment:0,only_fans_can_comment:0}]};
  const draft=await wxJson('https://api.weixin.qq.com/cgi-bin/draft/add?access_token='+encodeURIComponent(t),{method:'POST',headers:{'content-type':'application/json; charset=utf-8'},body:JSON.stringify(payload)});
