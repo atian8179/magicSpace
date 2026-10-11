@@ -1,11 +1,9 @@
 import http from 'node:http';
+import fs from 'node:fs';
 
-const imageUrls = [
-  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-1.jpg',
-  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-2.jpg',
-  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-3.jpg',
-  'https://miniapp-article-preview-v1-20260930.onrender.com/publish-img-4.jpg'
-];
+const finalDir = new URL('./wechat-final-20261011/', import.meta.url);
+const imagesBase64 = [1,2,3,4,5].map(i => fs.readFileSync(new URL(String(i).padStart(2,'0') + '.b64', finalDir), 'utf8').trim());
+if (imagesBase64.length !== 5 || imagesBase64.some(s => s.length < 1000)) throw new Error('FINAL_IMAGE_SOURCE_INCOMPLETE');
 
 let cachedResult = null;
 let running = null;
@@ -73,25 +71,17 @@ async function uploadCover(token, image) {
 }
 
 async function getCoverImage(fallbackImage) {
-  if (process.env.COVER_URL) {
-    return await fetchImage(process.env.COVER_URL);
-  }
-  if (process.env.COVER_B64) {
-    const buf = Buffer.from(process.env.COVER_B64, 'base64');
-    if (!buf.length) throw new Error('COVER_B64_EMPTY');
-    return {buf, type:'image/jpeg'};
-  }
-  try {
-    return await fetchImage('https://miniapp-article-preview-v1-20260930.onrender.com/cover.jpg');
-  } catch {
-    return fallbackImage;
-  }
+  // WeChat requires a cover: first original screenshot as temporary cover.
+  return fallbackImage;
 }
 
 async function submitDraft() {
   const token = await getToken();
-  const images = [];
-  for (const u of imageUrls) images.push(await fetchImage(u));
+  const images = imagesBase64.map((b64, index) => {
+    const buf = Buffer.from(b64, 'base64');
+    if (buf.length < 2000 || buf[0] !== 0xff || buf[1] !== 0xd8) throw new Error('INVALID_JPEG_' + (index+1));
+    return {buf, type:'image/jpeg'};
+  });
 
   const wxUrls = [];
   for (let i = 0; i < images.length; i++) {
@@ -100,16 +90,17 @@ async function submitDraft() {
 
   const thumbMediaId = await uploadCover(token, await getCoverImage(images[0]));
 
-  const articleResponse = await fetch('https://miniapp-article-preview-v1-20260930.onrender.com/publish.html', {redirect:'follow'});
-  if (!articleResponse.ok) throw new Error('ARTICLE_FETCH_ERROR ' + articleResponse.status);
-  let content = await articleResponse.text();
+  let content = fs.readFileSync(new URL('article.html', finalDir), 'utf8');
+  if (content.includes('偏偏这个时候') || !content.includes('公众号让一个人做媒体')) throw new Error('WRONG_ARTICLE_REVISION');
+  if ((content.match(/\{\{IMG[1-5]\}\}/g)||[]).length !== 5) throw new Error('IMAGE_PLACEHOLDER_COUNT_MISMATCH');
   wxUrls.forEach((u, i) => {
     content = content.replaceAll('{{IMG' + (i + 1) + '}}', u);
   });
 
+  if (content.includes('{{IMG') || (content.match(/<img\b/g)||[]).length !== 5) throw new Error('BODY_IMAGE_REPLACEMENT_FAILED');
   const payload = {
     articles: [{
-      title: process.env.TITLE,
+      title: '微信又放大招！个人小程序能打赏了，一人公司机会来了',
       author: process.env.AUTHOR || '',
       digest: process.env.DIGEST || '',
       content,
@@ -127,7 +118,7 @@ async function submitDraft() {
   });
 
   if (!draft.media_id) throw new Error('DRAFT_ERROR ' + JSON.stringify(draft));
-  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:false, temporary_cover:'first-body-image', source:'approved-preview'};
+  return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:false, temporary_cover:'first-body-image', source:'approved-final-three-sections-five-screenshots', title:payload.articles[0].title};
 }
 
 const server = http.createServer(async (req, res) => {
