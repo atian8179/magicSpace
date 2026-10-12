@@ -101,12 +101,12 @@ async function submitDraft() {
   const payload = {
     articles: [{
       title: '微信又放大招！个人小程序能打赏了，一人公司机会来了',
-      author: process.env.AUTHOR || '',
+      author: process.env.AUTHOR || '阿天AI编程',
       digest: process.env.DIGEST || '',
       content,
       content_source_url: '',
       thumb_media_id: thumbMediaId,
-      need_open_comment: 0,
+      need_open_comment: 1, // 默认允许所有用户留言，自动精选仍需公众号后台确认
       only_fans_can_comment: 0
     }]
   };
