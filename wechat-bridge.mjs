@@ -127,14 +127,14 @@ async function inspectArticle() {
  const r=await fetch(u,{headers:{'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36','accept-language':'zh-CN,zh;q=0.9','accept':'text/html,application/xhtml+xml'}});
  const html=await r.text();
  const mainPos=html.indexOf('id="js_content"');
- const root=mainPos>=0 ? html.slice(mainPos,mainPos+400000) : html;
+ const root=mainPos>=0 ? html.slice(mainPos,mainPos+700000) : html;
  const styleMap={};
  const tags={};
  const samples={p:[],section:[],span:[],strong:[],h1:[],h2:[],h3:[],img:[],blockquote:[],div:[]};
- for (const m of root.matchAll(/<(p|section|span|strong|h1|h2|h3|img|blockquote|div)\\b([^>]{0,2500})>/gi)) {
+ for (const m of root.matchAll(/<(p|section|span|strong|h1|h2|h3|img|blockquote|div)\b([^>]{0,2500})>/gi)) {
   const tag=m[1].toLowerCase(), attrs=m[2]||'';
   tags[tag]=(tags[tag]||0)+1;
-  const sm=attrs.match(/\\bstyle\\s*=\\s*["']([^"']{0,2000})["']/i);
+  const sm=attrs.match(/\bstyle\s*=\s*["']([^"']{0,2000})["']/i);
   if(!sm)continue;
   const style=sm[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&');
   for(const part of style.split(';')) {
@@ -145,11 +145,11 @@ async function inspectArticle() {
    styleMap[key]=(styleMap[key]||0)+1;
   }
   if(samples[tag]?.length<12) {
-   const text=root.slice(m.index+m[0].length,m.index+m[0].length+350).replace(/<[^>]*>/g,' ').replace(/\\s+/g,' ').slice(0,100);
+   const text=root.slice(m.index+m[0].length,m.index+m[0].length+350).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').slice(0,100);
    samples[tag].push({style,text});
   }
  }
- const entries=Object.entries(styleMap).sort((a,b)=>b[1]-a[1]).slice(0,120);
+ const entries=Object.entries(styleMap).sort((a,b)=>b[1]-a[1]).slice(0,190);
  return {http:r.status,bytes:html.length,bodyFound:mainPos>=0,title:(html.match(/<title[^>]*>([^<]*)/)||[])[1]||'',challenge:html.includes('环境异常')||html.includes('访问过于频繁'),tags,styles:entries,samples};
 }
 
