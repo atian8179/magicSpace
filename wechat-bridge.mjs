@@ -121,42 +121,9 @@ async function submitDraft() {
   return {ok:true, media_id:draft.media_id, uploaded_images:wxUrls.length, custom_cover:false, temporary_cover:'first-body-image', source:'approved-final-three-sections-five-screenshots', title:payload.articles[0].title};
 }
 
-
-async function inspectArticle() {
- const u='https://mp.weixin.qq.com/s/ici1jKI0EiU02-6TMVAEyw';
- const r=await fetch(u,{headers:{'user-agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36','accept-language':'zh-CN,zh;q=0.9','accept':'text/html,application/xhtml+xml'}});
- const html=await r.text();
- const mainPos=html.indexOf('id="js_content"');
- const root=mainPos>=0 ? html.slice(mainPos,mainPos+700000) : html;
- const styleMap={};
- const tags={};
- const samples={p:[],section:[],span:[],strong:[],h1:[],h2:[],h3:[],img:[],blockquote:[],div:[]};
- for (const m of root.matchAll(/<(p|section|span|strong|h1|h2|h3|img|blockquote|div)\b([^>]{0,2500})>/gi)) {
-  const tag=m[1].toLowerCase(), attrs=m[2]||'';
-  tags[tag]=(tags[tag]||0)+1;
-  const sm=attrs.match(/\bstyle\s*=\s*["']([^"']{0,2000})["']/i);
-  if(!sm)continue;
-  const style=sm[1].replace(/&quot;/g,'"').replace(/&amp;/g,'&');
-  for(const part of style.split(';')) {
-   const i=part.indexOf(':');if(i<1)continue;
-   const prop=part.slice(0,i).trim().toLowerCase(), val=part.slice(i+1).trim().toLowerCase();
-   if(!['font-size','line-height','letter-spacing','margin','margin-top','margin-bottom','margin-left','margin-right','padding','padding-top','padding-bottom','padding-left','padding-right','color','background-color','text-align','font-weight','border-radius','width','max-width'].includes(prop))continue;
-   const key=tag+' / '+prop+' = '+val;
-   styleMap[key]=(styleMap[key]||0)+1;
-  }
-  if(samples[tag]?.length<12) {
-   const text=root.slice(m.index+m[0].length,m.index+m[0].length+350).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').slice(0,100);
-   samples[tag].push({style,text});
-  }
- }
- const entries=Object.entries(styleMap).sort((a,b)=>b[1]-a[1]).slice(0,190);
- return {http:r.status,bytes:html.length,bodyFound:mainPos>=0,title:(html.match(/<title[^>]*>([^<]*)/)||[])[1]||'',challenge:html.includes('环境异常')||html.includes('访问过于频繁'),tags,styles:entries,samples};
-}
-
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, 'http://localhost');
   if (u.pathname === '/health') return json(res, 200, {ok:true});
-  if (u.pathname === '/inspect-article') { try { return json(res,200,await inspectArticle()); }catch(e){ return json(res,500,{error:String(e?.message||e)}); } }
   if (u.pathname !== '/run') return json(res, 404, {ok:false, error:'not_found'});
   if (u.searchParams.get('key') !== process.env.RUN_KEY) return json(res, 403, {ok:false, error:'forbidden'});
 
